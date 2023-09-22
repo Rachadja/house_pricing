@@ -1,2 +1,0 @@
-hello
-I think I did something I wasn't suppose to do in git !
