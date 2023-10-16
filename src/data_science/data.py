@@ -5,16 +5,26 @@ import numpy as np
 def split_data(df: pd.DataFrame,
                test_ratio : float = 0.2,
                seed : int = 0) -> tuple[pd.DataFrame]:
-    """Split the dataset into train and test sets by randomly shuffling the order of the data,
-       while fixing the random seed.
+    """
+    Description:
+        Split the dataset into train and test sets by randomly shuffling the order of the data,
+        while fixing the random seed.
 
     Args:
-        df (pd.DataFrame): _description_ ...
-        test_ratio (float): The percentage of the test set. This float number must be between 0 and 1.
-        seed (int): The shuffling parameter. ...
+    ----------
+    df : pandas.DataFrame.
+         The data to be split in train and test sets.
+         
+    test_ratio : float. 
+                 The percentage of the test set. This float must be between 0 and 1.
+        
+    seed : int. 
+           The shuffling parameter.
 
-    Returns:
-        tuple[pd.DataFrame]: X_train, y_train, X_test, y_test ...
+    Returns
+    ----------
+    X_train, y_train, X_test, y_test : tuple[pd.DataFrame].
+ 
     """
     # Let n be the number of observations we have
     n = df.shape[0]
