@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 def etude_univarie(data):
     """
     Description:
