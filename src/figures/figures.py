@@ -48,7 +48,7 @@ def etude_univarie(data):
 
 
 
-def etude_multivarie(data):
+def etude_multivarie(df):
     """
     Description:
     This function displays the correlation matrix between quantitative variables and the data distribution between two variables.
@@ -60,7 +60,7 @@ def etude_multivarie(data):
     None.
     """
     # ...
-    quantitative_col = data.select_dtypes("float").columns
+    quantitative_col = df.select_dtypes("float").columns
 
     # ...
     fig, axes = plt.subplots(nrows=4, ncols=3, figsize=(12, 12))
@@ -79,10 +79,10 @@ def etude_multivarie(data):
                 axes_flat[i-1].set_ylabel('Price')
             
     # ...
-    sns.heatmap(df.select_dtypes(include=['float64', 'int64']).corr(), annot=True, cmap='coolwarm', ax = axes_flat[5])
+    sns.heatmap(df.select_dtypes(include=['float64', 'int64']).corr(), annot=True, cmap='coolwarm', ax = axes_flat[5], cbar=False)
 
     # ...
-    colonne_quali = data.select_dtypes('object').columns
+    colonne_quali = df.select_dtypes('object').columns
     for i, col in enumerate(colonne_quali):
         sns.histplot(x=col, y='price', data=df, line_kws={"color": 'red'}, ax=axes_flat[5+i], cmap='coolwarm',cbar=True)
         axes_flat[5+i].set_xlabel(col)
