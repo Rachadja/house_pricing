@@ -44,3 +44,51 @@ def etude_univarie(data):
     # Affichez la figure
     fig.suptitle("Figure Title")
     plt.show() 
+
+
+
+
+def etude_multivarie(data):
+    """
+    Description:
+    This function displays the correlation matrix between quantitative variables and the data distribution between two variables.
+    
+    Parameters:
+    data: pandas.DataFrame.
+    
+    Returns:
+    None.
+    """
+    # ...
+    quantitative_col = data.select_dtypes("float").columns
+
+    # ...
+    fig, axes = plt.subplots(nrows=4, ncols=3, figsize=(12, 12))
+    axes_flat = axes.flatten()
+
+    # Iterate through each quantitative column and display its relationship with the price 
+    for i, col in enumerate(quantitative_col):
+        if col != 'price':
+            if col == 'area':
+                sns.regplot(x=col, y='price', data=df, line_kws={"color": 'red'}, ax=axes_flat[i-1])
+                axes_flat[i-1].set_xlabel(col)
+                axes_flat[i-1].set_ylabel('Price')
+            else:    
+                sns.histplot(x=col, y='price', data=df, line_kws={"color": 'red'}, ax=axes_flat[i-1], cmap='coolwarm',cbar=True)
+                axes_flat[i-1].set_xlabel(col)
+                axes_flat[i-1].set_ylabel('Price')
+            
+    # ...
+    sns.heatmap(df.select_dtypes(include=['float64', 'int64']).corr(), annot=True, cmap='coolwarm', ax = axes_flat[5])
+
+    # ...
+    colonne_quali = data.select_dtypes('object').columns
+    for i, col in enumerate(colonne_quali):
+        sns.histplot(x=col, y='price', data=df, line_kws={"color": 'red'}, ax=axes_flat[5+i], cmap='coolwarm',cbar=True)
+        axes_flat[5+i].set_xlabel(col)
+        axes_flat[5+i].set_ylabel('Price')     
+    
+    
+    plt.tight_layout()
+    # Display the figure
+    plt.show()
