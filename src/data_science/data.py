@@ -1,17 +1,20 @@
 import pandas as pd
 import numpy as np
 
-def split_data(df: pd.DataFrame, test_ratio: float = 0.2, seed: int = 0, stratify_cols: list = None) -> tuple[pd.DataFrame]:
-    """Split the dataset into train and test sets by manually stratifying the data based on specified columns.
+
+def split_data(df: pd.DataFrame,
+               test_ratio : float = 0.2,
+               seed : int = 0) -> tuple[pd.DataFrame]:
+    """Split the dataset into train and test sets by randomly shuffling the order of the data,
+       while fixing the random seed.
 
     Args:
-        df (pd.DataFrame): The input DataFrame.
+        df (pd.DataFrame): _description_ ...
         test_ratio (float): The percentage of the test set. This float number must be between 0 and 1.
-        seed (int): The shuffling parameter.
-        stratify_cols (list): A list of column names in the DataFrame to stratify based on.
+        seed (int): The shuffling parameter. ...
 
     Returns:
-        tuple[pd.DataFrame]: X_train, y_train, X_test, y_test
+        tuple[pd.DataFrame]: X_train, y_train, X_test, y_test ...
     """
     # Let n be the number of observations we have
     n = df.shape[0]
@@ -20,44 +23,23 @@ def split_data(df: pd.DataFrame, test_ratio: float = 0.2, seed: int = 0, stratif
     np.random.seed(seed)
 
     # The number of elements of the test and train sets.
-    n_test = int(n * test_ratio)
-
+    n_test = int( n * test_ratio )
+    
     if n - n_test <= 0:
-        return "Please choose a valid ratio for the test set"
+        return("Please choose a valid ratio for the test set")
+       
 
-    if stratify_cols is not None:
-        # Manually perform stratification based on the specified columns
-        unique_values = df[stratify_cols].drop_duplicates()
+    # We choose at random the indices of the test set.    
+    test_indices = np.random.choice(np.arange(0,n), n_test, replace=False)
+    # test_indices.sort()
 
-        test_indices = []
-        for _, row in unique_values.iterrows():
-            filter_condition = True
-            for col in stratify_cols:
-                filter_condition &= df[col] == row[col]
-            value_indices = df[filter_condition].index.to_list()
-            np.random.shuffle(value_indices)
-            split_point = int(len(value_indices) * test_ratio)
-            test_indices.extend(value_indices[:split_point])
+    # To get the indices of the train set, we create an array with values from 0 to n-1, then we remove the values of test_indices array.
+    indices = np.arange(n)
+    train_indices = indices[~np.isin(indices, test_indices)]
 
-        # To get the indices of the train set, we create an array with values from 0 to n-1, then we remove the values of test_indices array.
-        indices = np.arange(n)
-        train_indices = indices[~np.isin(indices, test_indices)]
-
-        # Here we create two dataframes used for training and testing
-        df_train = df.iloc[train_indices]
-        df_test = df.iloc[test_indices]
-
-    else:
-        # No stratification, so we choose at random the indices of the test set.
-        test_indices = np.random.choice(np.arange(0, n), n_test, replace=False)
-
-        # To get the indices of the train set, we create an array with values from 0 to n-1, then we remove the values of test_indices array.
-        indices = np.arange(n)
-        train_indices = indices[~np.isin(indices, test_indices)]
-
-        # Here we create two dataframes used for training and testing
-        df_train = df.iloc[train_indices]
-        df_test = df.iloc[test_indices]
+    # Here we create two dataframes used for training and testing
+    df_train = df.iloc[train_indices]
+    df_test = df.iloc[test_indices]
 
     # From the created dataframes, ....
     X_train, X_test = df_train.drop('price', axis=1), df_test.drop('price', axis=1)
