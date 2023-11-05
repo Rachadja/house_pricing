@@ -1,6 +1,6 @@
 import pandas as pd
 
-def formatage_donnee(data):
+def format_data(data):
     """
     Description:
     This function changes column names to lowercase and replaces spaces with underscores. It makes unique values that are written differently.
