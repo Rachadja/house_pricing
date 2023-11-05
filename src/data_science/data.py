@@ -1,14 +1,14 @@
 import pandas as pd
 import numpy as np
 
-def split_data(df: pd.DataFrame, test_ratio: float = 0.2, seed: int = 0, stratify_col: str = None) -> tuple[pd.DataFrame]:
-    """Split the dataset into train and test sets by manually stratifying the data based on a specified column.
+def split_data(df: pd.DataFrame, test_ratio: float = 0.2, seed: int = 0, stratify_cols: list = None) -> tuple[pd.DataFrame]:
+    """Split the dataset into train and test sets by manually stratifying the data based on specified columns.
 
     Args:
         df (pd.DataFrame): The input DataFrame.
         test_ratio (float): The percentage of the test set. This float number must be between 0 and 1.
         seed (int): The shuffling parameter.
-        stratify_col (str): The column in the DataFrame to stratify based on.
+        stratify_cols (list): A list of column names in the DataFrame to stratify based on.
 
     Returns:
         tuple[pd.DataFrame]: X_train, y_train, X_test, y_test
@@ -25,13 +25,16 @@ def split_data(df: pd.DataFrame, test_ratio: float = 0.2, seed: int = 0, stratif
     if n - n_test <= 0:
         return "Please choose a valid ratio for the test set"
 
-    if stratify_col is not None:
-        # Manually perform stratification based on the specified column
-        unique_values = df[stratify_col].unique()
+    if stratify_cols is not None:
+        # Manually perform stratification based on the specified columns
+        unique_values = df[stratify_cols].drop_duplicates()
 
         test_indices = []
-        for value in unique_values:
-            value_indices = np.where(df[stratify_col] == value)[0]
+        for _, row in unique_values.iterrows():
+            filter_condition = True
+            for col in stratify_cols:
+                filter_condition &= df[col] == row[col]
+            value_indices = df[filter_condition].index.to_list()
             np.random.shuffle(value_indices)
             split_point = int(len(value_indices) * test_ratio)
             test_indices.extend(value_indices[:split_point])
